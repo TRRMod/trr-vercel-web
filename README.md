@@ -1,41 +1,24 @@
-# TRR Vercel JSX
+# TRR JSX UI Preserved
 
-แปลงจาก Google Apps Script HTML เป็น Next.js JSX สำหรับ Vercel
+ชุดไฟล์ Next.js / JSX ที่แปลงจาก HTML เดิม โดยคง UX/UI ให้ใกล้ต้นฉบับที่สุด
 
 ## Pages
-- `/customer` หน้า Showcase + Catalog
-- `/tracker` บันทึกข้อมูล Build ลง Supabase table `builds`
-- `/admin` จัดการ Showcase, Catalog, Customer Settings
+- `/customer` - หน้า Customer Showcase
+- `/tracker` - หน้า Keyboard Build Tracker
+- `/admin` - หน้า Admin Studio
 
-## Environment Variables on Vercel
+## ENV สำหรับ Vercel
 ```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-## Required Supabase tables
-ใช้ตาราง `builds` เดิมของคุณ และเพิ่ม 2 ตารางนี้สำหรับ Settings/Catalog:
-
-```sql
-create table if not exists app_settings (
-  key text primary key,
-  value jsonb not null default '{}'::jsonb,
-  updated_at timestamptz default now()
-);
-
-create table if not exists catalog_items (
-  category text not null,
-  name text not null,
-  image_url text,
-  details text,
-  shopee1 text,
-  shopee2 text,
-  lazada text,
-  other text,
-  updated_at timestamptz default now(),
-  primary key (category, name)
-);
+## ใช้งาน
+```bash
+npm install
+npm run dev
 ```
 
-> API routes ใช้ `SUPABASE_SERVICE_ROLE_KEY` บน server จึงไม่ต้องเปิด RLS สำหรับหน้า admin/tracker ถ้า key ถูกตั้งถูกต้องใน Vercel
+## Deploy to Vercel
+Import repository นี้เข้า Vercel แล้วตั้ง Environment Variables ด้านบน

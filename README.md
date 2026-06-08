@@ -1,61 +1,41 @@
-# TRR Vercel Web
+# TRR Vercel JSX
 
-เว็บ Next.js สำหรับ Deploy บน Vercel พร้อมหน้า:
+แปลงจาก Google Apps Script HTML เป็น Next.js JSX สำหรับ Vercel
 
-- `/customer` หน้าโชว์ Build ให้ลูกค้า
-- `/tracker` หน้าบันทึกข้อมูล Build
-- `/admin` หน้าเปิด/ปิด Public และลบ Build
+## Pages
+- `/customer` หน้า Showcase + Catalog
+- `/tracker` บันทึกข้อมูล Build ลง Supabase table `builds`
+- `/admin` จัดการ Showcase, Catalog, Customer Settings
 
-## วิธีใช้งานบนเครื่อง
-
-```bash
-npm install
-npm run dev
-```
-
-## วิธี Deploy บน Vercel
-
-1. อัปโหลดโฟลเดอร์นี้ขึ้น GitHub
-2. เข้า https://vercel.com/
-3. กด Add New Project
-4. Import GitHub Repository
-5. ใส่ Environment Variables:
-
+## Environment Variables on Vercel
 ```env
-NEXT_PUBLIC_SUPABASE_URL=Supabase Project URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY=Supabase anon public key
-NEXT_PUBLIC_ADMIN_PIN=ตั้งรหัส Admin เช่น 2468
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
 ```
 
-6. กด Deploy
+## Required Supabase tables
+ใช้ตาราง `builds` เดิมของคุณ และเพิ่ม 2 ตารางนี้สำหรับ Settings/Catalog:
 
-## Supabase Table
+```sql
+create table if not exists app_settings (
+  key text primary key,
+  value jsonb not null default '{}'::jsonb,
+  updated_at timestamptz default now()
+);
 
-ใช้ตารางชื่อ `builds` ตาม column ที่คุณเคยสร้างไว้ เช่น:
+create table if not exists catalog_items (
+  category text not null,
+  name text not null,
+  image_url text,
+  details text,
+  shopee1 text,
+  shopee2 text,
+  lazada text,
+  other text,
+  updated_at timestamptz default now(),
+  primary key (category, name)
+);
+```
 
-- build
-- ep
-- pcb
-- plate
-- foam
-- stab
-- case_name
-- switch1 / switch1_qty
-- switch2 / switch2_qty
-- switch3 / switch3_qty
-- keycap
-- total_cost
-- total_price
-- profit
-- description
-- cover_image
-- image_urls
-- youtube_build_url
-- youtube_sound_url
-- is_public
-
-## หมายเหตุ
-
-- หน้า Customer จะดึงเฉพาะ `is_public = true`
-- หน้า Tracker ใช้เพิ่มข้อมูลใหม่
-- หน้า Admin ใช้ PIN จาก `NEXT_PUBLIC_ADMIN_PIN`
+> API routes ใช้ `SUPABASE_SERVICE_ROLE_KEY` บน server จึงไม่ต้องเปิด RLS สำหรับหน้า admin/tracker ถ้า key ถูกตั้งถูกต้องใน Vercel

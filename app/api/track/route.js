@@ -1,2 +1,0 @@
-import { NextResponse } from 'next/server'; import { getServerSupabase } from '@/lib/supabaseServer';
-export async function POST(req){try{const {id}=await req.json(); const sb=getServerSupabase(); const {data}=await sb.from('builds').select('views').eq('id',id).single(); const views=(parseInt(data?.views,10)||0)+1; await sb.from('builds').update({views}).eq('id',id); return NextResponse.json({views})}catch(e){return NextResponse.json({views:0,error:e.message})}}

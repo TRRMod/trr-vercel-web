@@ -22,3 +22,20 @@ npm run dev
 
 ## Deploy to Vercel
 Import repository นี้เข้า Vercel แล้วตั้ง Environment Variables ด้านบน
+
+## Tracker update notes
+
+Required Vercel env:
+
+```env
+NEXT_PUBLIC_ADMIN_PIN=your-one-password
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+If you want to store the new `Remark` field, add this column in Supabase SQL Editor:
+
+```sql
+alter table builds add column if not exists remark text;
+```
+
+Then redeploy on Vercel.

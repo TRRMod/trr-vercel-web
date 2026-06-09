@@ -68,7 +68,9 @@ export async function GET(req){
         Stab:uniq(r.map(x=>x.stab)),
         Case:uniq(r.map(x=>x.case_name)),
         Switch:uniq([...r.map(x=>x.switch1),...r.map(x=>x.switch2),...r.map(x=>x.switch3)]),
-        Keycap:uniq(r.map(x=>x.keycap))
+        Keycap:uniq(r.map(x=>x.keycap)),
+        EP:uniq(r.map(x=>x.ep)),
+        AssemblyFee:uniq(r.map(x=>x.assembly_fee))
       });
     }
 

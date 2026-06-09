@@ -39,3 +39,8 @@ alter table builds add column if not exists remark text;
 ```
 
 Then redeploy on Vercel.
+
+## Tracker update
+- Renamed display label from `ค่าส่งทุน` to `ค่าส่งขาย` on Tracker UI/table while keeping existing database field `shipping_cost`.
+- Moved `Remark` field next to `ค่าส่งจริง`.
+- Added table record limit selector: 20 / 50 / 100 / 200 / ALL.

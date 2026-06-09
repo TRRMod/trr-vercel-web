@@ -10,10 +10,14 @@ function json(data,status=200){
   return NextResponse.json(data,{status});
 }
 
-async function readBuilds(sb,{mode,id}){
+async function readBuilds(sb,{mode,id,limit}){
   let q = sb.from('builds').select('*',{count:'exact'});
   if(id) q = q.eq('id',id).limit(1);
   if(mode === 'public') q = q.eq('is_public',true);
+  if(!id && mode === 'materials' && limit && limit !== 'ALL'){
+    const n = Math.min(Math.max(parseInt(limit,10)||20,1),200);
+    q = q.limit(n);
+  }
 
   const orderColumn = mode === 'materials' || mode === 'options' || mode === 'debug' ? 'created_at' : 'updated_at';
   const {data,error,count} = await q.order(orderColumn,{ascending:false});
@@ -27,6 +31,7 @@ export async function GET(req){
     const {searchParams} = new URL(req.url);
     const mode = searchParams.get('mode') || 'public';
     const id = searchParams.get('id');
+    const limit = searchParams.get('limit') || '20';
 
     // Tracker/Admin must use service role because many Supabase projects keep RLS on.
     // Without service role Supabase can return [] even when the table has data.
@@ -42,7 +47,7 @@ export async function GET(req){
       },500);
     }
 
-    const {data,count} = await readBuilds(sb,{mode,id});
+    const {data,count} = await readBuilds(sb,{mode,id,limit});
 
     if(mode === 'debug'){
       return json({
